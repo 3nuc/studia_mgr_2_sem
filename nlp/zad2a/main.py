@@ -1,37 +1,23 @@
-import spacy
 import random
-import string
+import math
+import helpers
+import spacy
 
 
-text = open('./przyklad.txt').read()
-nlp = spacy.load('en_core_web_sm')
-
-doc = nlp(text)
-tokens = doc
-
-
-def filterBadStuff(token):
-    return token.pos_ not in ['PUNCT', 'SYM', 'NUM', 'SPACE']
-
-
-tokens = filter(filterBadStuff, tokens)
-
+tokens = helpers.get_tokens()
+tokens = map(lambda token: token.text,tokens)
 # drop dupes
 tokens = list(dict.fromkeys(tokens))
 
+tokens_count = len(tokens)
+twenty_percent = math.ceil(tokens_count*0.2)
 
-# for token in tokens:
-#     print(token.text, token.pos_)
+token_indices_to_scramble = random.sample(
+    range(1, tokens_count), twenty_percent)
 
+for index in token_indices_to_scramble:
+    operations = [helpers.ScrambleOperations.add_letter,
+                  helpers.ScrambleOperations.remove_letter, helpers.ScrambleOperations.swap_letter]
+    tokens[index] = random.choice(operations)(tokens[index])
 
-class ScrambleOperations:
-    @staticmethod
-    def swap_letter(text):
-        copy = text
-        letter_index_to_swap = random.randrange(0, len(copy)-1)
-        as_list = list(copy)
-        as_list[letter_index_to_swap] = random.choice(string.ascii_letters)
-        return "".join(as_list)
-
-
-print(ScrambleOperations.swap_letter('fofofofofo'))
+helpers.write_tokens(tokens)
