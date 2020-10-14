@@ -4,6 +4,10 @@ import helpers
 import spacy
 
 
+original_tokens = helpers.get_tokens()
+original_tokens = map(lambda token: token.text,original_tokens)
+original_tokens = list(dict.fromkeys(original_tokens))
+
 tokens = helpers.get_tokens()
 tokens = map(lambda token: token.text,tokens)
 # drop dupes
@@ -21,3 +25,10 @@ for index in token_indices_to_scramble:
     tokens[index] = random.choice(operations)(tokens[index])
 
 helpers.write_tokens(tokens)
+
+for index in range(len(tokens)):
+    tokens[index] = helpers.get_best_distance_match(tokens[index], original_tokens);
+    print(tokens[index], original_tokens[index], '\n')
+
+mistake_count = helpers.get_number_of_mistakes(tokens, original_tokens)
+print("Number of mistakes that weren't fixed:", mistake_count, "out of", len(tokens))
