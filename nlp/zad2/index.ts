@@ -4,7 +4,6 @@ const client = new Client({
   password: 'postgres',
   port: 5433
 });
-
 (async () => {
   await client.connect()
   console.log(await zad1Query('videos | world'))
